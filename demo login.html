@@ -37,10 +37,11 @@
         };
 
         if(email === validUser.email && password === validUser.password) {
-          alert('Login successful!');
-          // redirect or UI change here
+          console.log('Login successful');
+          // TODO: Redirect or update UI here
         } else {
-          alert('Invalid credentials.');
+          console.log('Invalid credentials');
+          // TODO: Show error message in UI
         }
       });
     });
