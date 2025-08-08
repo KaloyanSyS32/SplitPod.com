@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SplitsPod Login Debug</title>
+  <title>SplitsPod Login</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -58,7 +58,7 @@
 </head>
 <body>
 
-  <h1>Login Debug</h1>
+  <h1>Welcome to SplitsPod</h1>
 
   <form id="loginForm">
     <label for="loginEmail">Email:</label>
@@ -73,14 +73,8 @@
   <div id="message"></div>
 
   <script type="module">
-    console.log("Script loaded");
-
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-    import {
-      getAuth,
-      signInWithEmailAndPassword,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAvl_zp_CjCTz4YfJxMXHyGvW3T5jruCQI",
@@ -97,32 +91,36 @@
     const messageDiv = document.getElementById("message");
 
     onAuthStateChanged(auth, (user) => {
-      console.log("onAuthStateChanged called, user:", user);
+      console.log("onAuthStateChanged", user);
       if (user) {
-        console.log("User logged in, redirecting...");
+        console.log("User logged in, redirecting to dashboard.html");
         window.location.href = "dashboard.html";
       }
     });
 
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      console.log("Login form submitted");
+    // Attach event listener only after DOM fully loaded
+    window.addEventListener("DOMContentLoaded", () => {
+      const loginForm = document.getElementById("loginForm");
 
-      const email = document.getElementById("loginEmail").value.trim();
-      const password = document.getElementById("loginPassword").value.trim();
+      loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        console.log("Login form submitted");
 
-      messageDiv.textContent = "";
-      try {
-        console.log("Calling signInWithEmailAndPassword", email);
-        await signInWithEmailAndPassword(auth, email, password);
-        messageDiv.textContent = "Logging in...";
-        messageDiv.style.color = "#00ff99";
-        console.log("Sign in success");
-      } catch (error) {
-        console.error("Sign in error:", error);
-        messageDiv.textContent = "Login failed: " + error.message;
-        messageDiv.style.color = "#ff3333";
-      }
+        const email = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value.trim();
+
+        messageDiv.textContent = "";
+        try {
+          console.log("Calling signInWithEmailAndPassword with", email);
+          await signInWithEmailAndPassword(auth, email, password);
+          messageDiv.textContent = "Logging in...";
+          messageDiv.style.color = "#00ff99";
+        } catch (error) {
+          console.error("Login error", error);
+          messageDiv.textContent = "Login failed: " + error.message;
+          messageDiv.style.color = "#ff3333";
+        }
+      });
     });
   </script>
 
