@@ -18,13 +18,20 @@
       align-items: center;
       justify-content: center;
     }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    p.description {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+    }
     form {
       background-color: rgba(255, 255, 255, 0.1);
       padding: 2rem;
       border-radius: 10px;
       max-width: 300px;
       width: 100%;
-      margin-bottom: 1rem;
     }
     label, input, button {
       display: block;
@@ -54,23 +61,40 @@
       margin-top: 1rem;
       font-weight: bold;
     }
+    #signupPrompt {
+      margin-top: 35px;
+      font-size: 0.9rem;
+      color: white;
+    }
+    #signupPrompt a {
+      color: #00ff99;
+      text-decoration: none;
+    }
+    #signupPrompt a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
 
   <h1>Welcome to SplitsPod</h1>
+  <p class="description">Your new favorite music streaming platform.</p>
 
   <form id="loginForm">
     <label for="loginEmail">Email:</label>
-    <input type="email" id="loginEmail" required autocomplete="username" />
+    <input type="email" id="loginEmail" name="email" required autocomplete="username" />
 
     <label for="loginPassword">Password:</label>
-    <input type="password" id="loginPassword" required autocomplete="current-password" />
+    <input type="password" id="loginPassword" name="password" required autocomplete="current-password" />
 
     <button type="submit">Log In</button>
+
+    <div id="message"></div>
   </form>
 
-  <div id="message"></div>
+  <p id="signupPrompt">
+    Don't have an account? <a href="signup.html">Sign Up</a>
+  </p>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
@@ -91,32 +115,26 @@
     const messageDiv = document.getElementById("message");
 
     onAuthStateChanged(auth, (user) => {
-      console.log("onAuthStateChanged", user);
       if (user) {
-        console.log("User logged in, redirecting to dashboard.html");
         window.location.href = "dashboard.html";
       }
     });
 
-    // Attach event listener only after DOM fully loaded
     window.addEventListener("DOMContentLoaded", () => {
       const loginForm = document.getElementById("loginForm");
 
       loginForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        console.log("Login form submitted");
 
         const email = document.getElementById("loginEmail").value.trim();
         const password = document.getElementById("loginPassword").value.trim();
 
         messageDiv.textContent = "";
         try {
-          console.log("Calling signInWithEmailAndPassword with", email);
           await signInWithEmailAndPassword(auth, email, password);
           messageDiv.textContent = "Logging in...";
           messageDiv.style.color = "#00ff99";
         } catch (error) {
-          console.error("Login error", error);
           messageDiv.textContent = "Login failed: " + error.message;
           messageDiv.style.color = "#ff3333";
         }
