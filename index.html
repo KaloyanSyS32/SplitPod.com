@@ -86,10 +86,10 @@
   <!-- LOGIN FORM -->
   <form id="loginForm">
     <label for="loginEmail">Email:</label>
-    <input type="email" id="loginEmail" required />
+    <input type="email" id="loginEmail" required autocomplete="username" />
 
     <label for="loginPassword">Password:</label>
-    <input type="password" id="loginPassword" required />
+    <input type="password" id="loginPassword" required autocomplete="current-password" />
 
     <button type="submit">Log In</button>
   </form>
@@ -97,10 +97,10 @@
   <!-- SIGNUP FORM -->
   <form id="signupForm">
     <label for="signupEmail">Email:</label>
-    <input type="email" id="signupEmail" required />
+    <input type="email" id="signupEmail" required autocomplete="username" />
 
     <label for="signupPassword">Password:</label>
-    <input type="password" id="signupPassword" required />
+    <input type="password" id="signupPassword" required autocomplete="new-password" />
 
     <button type="submit">Sign Up</button>
   </form>
@@ -129,10 +129,12 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Redirect when logged in
+    const messageDiv = document.getElementById("message");
+
+    // Redirect on login state change
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        window.location.href = "dashboard.html"; // same window redirect
+        window.location.href = "dashboard.html";
       }
     });
 
@@ -141,15 +143,15 @@
       e.preventDefault();
       const email = document.getElementById("loginEmail").value.trim();
       const password = document.getElementById("loginPassword").value.trim();
-      const message = document.getElementById("message");
 
+      messageDiv.textContent = "";
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        message.textContent = "Logging in...";
-        message.style.color = "#00ff99";
+        messageDiv.textContent = "Logging in...";
+        messageDiv.style.color = "#00ff99";
       } catch (error) {
-        message.textContent = "Login failed: " + error.message;
-        message.style.color = "#ff3333";
+        messageDiv.textContent = "Login failed: " + error.message;
+        messageDiv.style.color = "#ff3333";
       }
     });
 
@@ -158,34 +160,36 @@
       e.preventDefault();
       const email = document.getElementById("signupEmail").value.trim();
       const password = document.getElementById("signupPassword").value.trim();
-      const message = document.getElementById("message");
 
+      messageDiv.textContent = "";
       try {
         await createUserWithEmailAndPassword(auth, email, password);
-        message.textContent = "Signup successful. You can now log in.";
-        message.style.color = "#00ff99";
+        messageDiv.textContent = "Signup successful. You can now log in.";
+        messageDiv.style.color = "#00ff99";
         toggleForms();
       } catch (error) {
-        message.textContent = "Signup failed: " + error.message;
-        message.style.color = "#ff3333";
+        messageDiv.textContent = "Signup failed: " + error.message;
+        messageDiv.style.color = "#ff3333";
       }
     });
 
-    // Toggle between login and signup forms
+    // Toggle forms between login and signup
     window.toggleForms = function () {
       const loginForm = document.getElementById("loginForm");
       const signupForm = document.getElementById("signupForm");
       const toggleButton = document.getElementById("toggleButton");
-      const isLoginVisible = loginForm.style.display !== "none";
 
-      loginForm.style.display = isLoginVisible ? "none" : "block";
-      signupForm.style.display = isLoginVisible ? "block" : "none";
-      toggleButton.textContent = isLoginVisible
+      const loginVisible = loginForm.style.display !== "none";
+      loginForm.style.display = loginVisible ? "none" : "block";
+      signupForm.style.display = loginVisible ? "block" : "none";
+
+      toggleButton.textContent = loginVisible
         ? "Already have an account? Log in here"
         : "Don't have an account? Sign up here";
 
-      document.getElementById("message").textContent = "";
+      messageDiv.textContent = "";
     };
   </script>
+
 </body>
 </html>
