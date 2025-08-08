@@ -18,17 +18,14 @@
       align-items: center;
       justify-content: center;
     }
-
     h1 {
       font-size: 3rem;
       margin-bottom: 1rem;
     }
-
     p {
       font-size: 1.25rem;
       margin-bottom: 2rem;
     }
-
     form {
       background-color: rgba(255, 255, 255, 0.1);
       padding: 2rem;
@@ -37,19 +34,16 @@
       width: 100%;
       margin-bottom: 1rem;
     }
-
     label, input, button {
       display: block;
       width: 100%;
       margin-bottom: 1rem;
     }
-
     input {
       padding: 0.5rem;
       border: none;
       border-radius: 5px;
     }
-
     button {
       padding: 0.75rem;
       border: none;
@@ -60,22 +54,17 @@
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
-
     button:hover {
       background-color: #fff;
       color: #27ae60;
     }
-
     #message {
       margin-top: 1rem;
       font-weight: bold;
     }
-
     #signupForm {
       display: none;
     }
-
-    /* Updated toggle button styles */
     #toggleButton {
       background: none;
       border: none;
@@ -119,13 +108,13 @@
   <button id="toggleButton" onclick="toggleForms()">Don't have an account? Sign up here</button>
   <div id="message"></div>
 
-  <!-- FIREBASE SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
     import {
       getAuth,
       signInWithEmailAndPassword,
-      createUserWithEmailAndPassword
+      createUserWithEmailAndPassword,
+      onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -140,7 +129,7 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // LOGIN
+    // Login form handler
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.getElementById("loginEmail").value.trim();
@@ -149,15 +138,15 @@
 
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        // Direct redirect after successful login
-        window.location.href = "dashboard.html";
+        message.textContent = "Logging in...";
+        message.style.color = "#00ff99";
       } catch (err) {
         message.textContent = "Login failed: " + err.message;
         message.style.color = "#ff3333";
       }
     });
 
-    // SIGNUP
+    // Signup form handler
     document.getElementById("signupForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.getElementById("signupEmail").value.trim();
@@ -175,7 +164,7 @@
       }
     });
 
-    // TOGGLE BETWEEN LOGIN / SIGNUP
+    // Toggle forms between login and signup
     window.toggleForms = function () {
       const loginForm = document.getElementById("loginForm");
       const signupForm = document.getElementById("signupForm");
@@ -190,6 +179,13 @@
 
       document.getElementById("message").textContent = "";
     };
+
+    // Redirect on login state change
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        window.location.href = "dashboard.html";
+      }
+    });
   </script>
 </body>
 </html>
