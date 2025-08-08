@@ -3,89 +3,152 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dashboard - SplitsPod</title>
+  <title>SplitsPod Dashboard</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 4rem 2rem;
-      background: linear-gradient(135deg, #27ae60, #8e44ad);
+      background: linear-gradient(135deg, #8e44ad, #27ae60);
       color: white;
+      font-family: Arial, sans-serif;
       min-height: 100vh;
       margin: 0;
+      padding: 2rem;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
     }
-    h1 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
+    header {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
     }
-    button {
-      padding: 0.75rem 1.5rem;
+    button#logoutBtn {
+      background: #fff;
+      color: #27ae60;
       border: none;
-      border-radius: 30px;
-      background-color: #ffffffcc;
-      color: #333;
+      padding: 0.5rem 1.2rem;
       font-weight: bold;
+      border-radius: 30px;
       cursor: pointer;
       transition: background-color 0.3s ease;
-      margin-top: 2rem;
     }
-    button:hover {
-      background-color: #fff;
-      color: #27ae60;
+    button#logoutBtn:hover {
+      background: #e0e0e0;
+    }
+    #mp3Player {
+      background: rgba(0,0,0,0.3);
+      border-radius: 10px;
+      padding: 1rem;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    #mp3Player div {
+      margin-bottom: 0.5rem;
+    }
+    #playPauseBtn {
+      background: #27ae60;
+      border: none;
+      padding: 0.5rem 1rem;
+      color: white;
+      font-weight: bold;
+      border-radius: 30px;
+      cursor: pointer;
+      margin-bottom: 1rem;
+    }
+    #playPauseBtn:hover {
+      background: #219150;
+    }
+    input[type="range"] {
+      width: 100%;
+      margin: 0.5rem 0;
     }
   </style>
 </head>
 <body>
 
-  <h1>Dashboard</h1>
-  <p>Welcome! You are logged in.</p>
-  <button id="logoutBtn">Log Out</button>
+<header>
+  <h1>SplitsPod Dashboard</h1>
+  <button id="logoutBtn">Logout</button>
+</header>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-    import {
-      getAuth,
-      onAuthStateChanged,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+<section id="mp3Player">
+  <div><strong>Track:</strong> <span id="trackTitle">Sample Track</span></div>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAvl_zp_CjCTz4YfJxMXHyGvW3T5jruCQI",
-      authDomain: "splitspod.firebaseapp.com",
-      projectId: "splitspod",
-      storageBucket: "splitspod.firebasestorage.app",
-      messagingSenderId: "259138042696",
-      appId: "1:259138042696:web:23d2e4e389beb0d39f117d"
-    };
+  <audio id="audio" src="your-audio-file.mp3"></audio>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+  <button id="playPauseBtn">Play</button>
 
-    let initialized = false;
+  <input type="range" id="progress" min="0" max="100" value="0" />
 
-    onAuthStateChanged(auth, (user) => {
-      if (!initialized) {
-        initialized = true;
-        if (!user) {
-          // Not logged in — redirect to login page
-          window.location.href = 'index.html';
-        }
-        // else user is logged in, let page stay
-      }
+  <label for="volume">Volume</label>
+  <input type="range" id="volume" min="0" max="1" step="0.01" value="1" />
+</section>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+  import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAvl_zp_CjCTz4YfJxMXHyGvW3T5jruCQI",
+    authDomain: "splitspod.firebaseapp.com",
+    projectId: "splitspod",
+    storageBucket: "splitspod.firebasestorage.app",
+    messagingSenderId: "259138042696",
+    appId: "1:259138042696:web:23d2e4e389beb0d39f117d"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const logoutBtn = document.getElementById("logoutBtn");
+  const audio = document.getElementById("audio");
+  const playPauseBtn = document.getElementById("playPauseBtn");
+  const progress = document.getElementById("progress");
+  const volume = document.getElementById("volume");
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      // Not logged in, redirect to login
+      window.location.href = "index.html";
+    }
+  });
+
+  logoutBtn.addEventListener("click", () => {
+    signOut(auth).then(() => {
+      window.location.href = "index.html";
     });
+  });
 
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      try {
-        await signOut(auth);
-        window.location.href = 'index.html';
-      } catch (err) {
-        alert('Logout failed: ' + err.message);
-      }
-    });
-  </script>
+  playPauseBtn.addEventListener("click", () => {
+    if (audio.paused) {
+      audio.play();
+      playPauseBtn.textContent = "Pause";
+    } else {
+      audio.pause();
+      playPauseBtn.textContent = "Play";
+    }
+  });
+
+  audio.addEventListener("timeupdate", () => {
+    if (audio.duration) {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      progress.value = percent;
+    }
+  });
+
+  progress.addEventListener("input", () => {
+    if (audio.duration) {
+      audio.currentTime = (progress.value / 100) * audio.duration;
+    }
+  });
+
+  volume.addEventListener("input", () => {
+    audio.volume = volume.value;
+  });
+</script>
+
 </body>
 </html>
