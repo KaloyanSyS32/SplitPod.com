@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #27ae60, #8e44ad);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    button {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 30px;
+      background: #ffffffcc;
+      color: #333;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background: #fff;
+      color: #27ae60;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Dashboard</h1>
+  <p>Welcome back!</p>
+  <button id="logoutBtn">Log Out</button>
+
+  <script>
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      window.location.href = 'index.html';
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+
+    // Redirect to login if not logged in
+    window.onload = () => {
+      if (!localStorage.getItem('loggedInUser')) {
+        window.location.href = 'index.html';
+      }
+    };
+  </script>
+
+</body>
+</html>
