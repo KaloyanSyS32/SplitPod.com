@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SplitsPod Main</title>
+  <title>SplitsPod</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -15,35 +15,181 @@
       margin: 0;
       display: flex;
       flex-direction: column;
+      align-items: center;
       justify-content: center;
     }
+
     h1 {
       font-size: 3rem;
       margin-bottom: 1rem;
     }
+
     p {
       font-size: 1.25rem;
-      margin-bottom: 3rem;
+      margin-bottom: 2rem;
     }
+
+    form {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      border-radius: 10px;
+      max-width: 300px;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    label, input, button {
+      display: block;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    input {
+      padding: 0.5rem;
+      border: none;
+      border-radius: 5px;
+    }
+
     button {
-      font-size: 1.25rem;
-      padding: 1rem 3rem;
+      padding: 0.75rem;
       border: none;
       border-radius: 30px;
       background-color: #ffffffcc;
       color: #333;
+      font-weight: bold;
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
+
     button:hover {
       background-color: #fff;
       color: #27ae60;
     }
+
+    #message {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    #signupForm {
+      display: none;
+    }
+
+    /* Updated toggle button styles */
+    #toggleButton {
+      background: none;
+      border: none;
+      color: #fff;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-top: 35px;
+      font-size: 0.9rem;
+      padding: 0;
+      width: auto;
+    }
   </style>
 </head>
 <body>
+
   <h1>Welcome to SplitsPod</h1>
   <p>Your new favorite music streaming platform.</p>
-  <button onclick="window.location.href='Login.html'">Login</button>
+
+  <!-- LOGIN FORM -->
+  <form id="loginForm">
+    <label for="loginEmail">Email:</label>
+    <input type="email" id="loginEmail" required />
+
+    <label for="loginPassword">Password:</label>
+    <input type="password" id="loginPassword" required />
+
+    <button type="submit">Log In</button>
+  </form>
+
+  <!-- SIGNUP FORM -->
+  <form id="signupForm">
+    <label for="signupEmail">Email:</label>
+    <input type="email" id="signupEmail" required />
+
+    <label for="signupPassword">Password:</label>
+    <input type="password" id="signupPassword" required />
+
+    <button type="submit">Sign Up</button>
+  </form>
+
+  <button id="toggleButton" onclick="toggleForms()">Don't have an account? Sign up here</button>
+  <div id="message"></div>
+
+  <!-- FIREBASE SCRIPT -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAvl_zp_CjCTz4YfJxMXHyGvW3T5jruCQI",
+      authDomain: "splitspod.firebaseapp.com",
+      projectId: "splitspod",
+      storageBucket: "splitspod.firebasestorage.app",
+      messagingSenderId: "259138042696",
+      appId: "1:259138042696:web:23d2e4e389beb0d39f117d"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // LOGIN
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+      const message = document.getElementById("message");
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        // Direct redirect after successful login
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        message.textContent = "Login failed: " + err.message;
+        message.style.color = "#ff3333";
+      }
+    });
+
+    // SIGNUP
+    document.getElementById("signupForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("signupEmail").value.trim();
+      const password = document.getElementById("signupPassword").value.trim();
+      const message = document.getElementById("message");
+
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        message.textContent = "Signup successful. You can now log in.";
+        message.style.color = "#00ff99";
+        toggleForms();
+      } catch (err) {
+        message.textContent = "Signup failed: " + err.message;
+        message.style.color = "#ff3333";
+      }
+    });
+
+    // TOGGLE BETWEEN LOGIN / SIGNUP
+    window.toggleForms = function () {
+      const loginForm = document.getElementById("loginForm");
+      const signupForm = document.getElementById("signupForm");
+      const toggleButton = document.getElementById("toggleButton");
+      const isLoginVisible = loginForm.style.display !== "none";
+
+      loginForm.style.display = isLoginVisible ? "none" : "block";
+      signupForm.style.display = isLoginVisible ? "block" : "none";
+      toggleButton.textContent = isLoginVisible
+        ? "Already have an account? Log in here"
+        : "Don't have an account? Sign up here";
+
+      document.getElementById("message").textContent = "";
+    };
+  </script>
 </body>
 </html>
