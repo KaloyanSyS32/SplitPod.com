@@ -1,154 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SplitsPod Dashboard</title>
-  <style>
-    body {
-      background: linear-gradient(135deg, #8e44ad, #27ae60);
-      color: white;
-      font-family: Arial, sans-serif;
-      min-height: 100vh;
-      margin: 0;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    header {
-      width: 100%;
-      max-width: 600px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-    }
-    button#logoutBtn {
-      background: #fff;
-      color: #27ae60;
-      border: none;
-      padding: 0.5rem 1.2rem;
-      font-weight: bold;
-      border-radius: 30px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    button#logoutBtn:hover {
-      background: #e0e0e0;
-    }
-    #mp3Player {
-      background: rgba(0,0,0,0.3);
-      border-radius: 10px;
-      padding: 1rem;
-      max-width: 400px;
-      width: 100%;
-      text-align: center;
-    }
-    #mp3Player div {
-      margin-bottom: 0.5rem;
-    }
-    #playPauseBtn {
-      background: #27ae60;
-      border: none;
-      padding: 0.5rem 1rem;
-      color: white;
-      font-weight: bold;
-      border-radius: 30px;
-      cursor: pointer;
-      margin-bottom: 1rem;
-    }
-    #playPauseBtn:hover {
-      background: #219150;
-    }
-    input[type="range"] {
-      width: 100%;
-      margin: 0.5rem 0;
-    }
-  </style>
-</head>
-<body>
-
-<header>
-  <h1>SplitsPod Dashboard</h1>
-  <button id="logoutBtn">Logout</button>
-</header>
-
-<section id="mp3Player">
-  <div><strong>Track:</strong> <span id="trackTitle">Sample Track</span></div>
-
-  <audio id="audio" src="your-audio-file.mp3"></audio>
-
-  <button id="playPauseBtn">Play</button>
-
-  <input type="range" id="progress" min="0" max="100" value="0" />
-
-  <label for="volume">Volume</label>
-  <input type="range" id="volume" min="0" max="1" step="0.01" value="1" />
-</section>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-  import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAvl_zp_CjCTz4YfJxMXHyGvW3T5jruCQI",
-    authDomain: "splitspod.firebaseapp.com",
-    projectId: "splitspod",
-    storageBucket: "splitspod.firebasestorage.app",
-    messagingSenderId: "259138042696",
-    appId: "1:259138042696:web:23d2e4e389beb0d39f117d"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  const logoutBtn = document.getElementById("logoutBtn");
-  const audio = document.getElementById("audio");
-  const playPauseBtn = document.getElementById("playPauseBtn");
-  const progress = document.getElementById("progress");
-  const volume = document.getElementById("volume");
-
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      // Not logged in, redirect to login
-      window.location.href = "index.html";
-    }
-  });
-
-  logoutBtn.addEventListener("click", () => {
-    signOut(auth).then(() => {
-      window.location.href = "index.html";
-    });
-  });
-
-  playPauseBtn.addEventListener("click", () => {
-    if (audio.paused) {
-      audio.play();
-      playPauseBtn.textContent = "Pause";
-    } else {
-      audio.pause();
-      playPauseBtn.textContent = "Play";
-    }
-  });
-
-  audio.addEventListener("timeupdate", () => {
-    if (audio.duration) {
-      const percent = (audio.currentTime / audio.duration) * 100;
-      progress.value = percent;
-    }
-  });
-
-  progress.addEventListener("input", () => {
-    if (audio.duration) {
-      audio.currentTime = (progress.value / 100) * audio.duration;
-    }
-  });
-
-  volume.addEventListener("input", () => {
-    audio.volume = volume.value;
-  });
-</script>
-
-</body>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charSet="utf-8"/>
+        <title>Spotify - Web Player: Music for everyone</title>
+        <link rel="icon" sizes="32x32" type="image/png" href="https://open.spotifycdn.com/cdn/images/favicon32.b64ecc03.png"/>
+        <link rel="icon" sizes="16x16" type="image/png" href="https://open.spotifycdn.com/cdn/images/favicon16.1c487bff.png"/>
+        <link rel="icon" href="https://open.spotifycdn.com/cdn/images/favicon.0f31d2ea.ico"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=9"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+        <link rel="preload" href="https://encore.scdn.co/fonts/SpotifyMixUI-Regular-cc3b1de388efa4cbca6c75cebc24585e.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
+        <link rel="preload" href="https://encore.scdn.co/fonts/SpotifyMixUITitleVariable-8769ccfde3379b7ebcadd9529b49d0cc.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
+        <link rel="preload" href="https://encore.scdn.co/fonts/SpotifyMixUI-Bold-4264b799009b1db5c491778b1bc8e5b7.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
+        <link rel="preload" href="https://encore.scdn.co/fonts/SpotifyMixUITitleVariable-8769ccfde3379b7ebcadd9529b49d0cc.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
+        <meta property="og:site_name" content="Spotify"/>
+        <meta property="fb:app_id" content="174829003346"/>
+        <meta property="og:title" content="Spotify - Web Player: Music for everyone"/>
+        <meta property="og:description" content="Spotify is a digital music service that gives you access to millions of songs."/>
+        <meta property="og:url" content="https://open.spotify.com/"/>
+        <meta property="og:type" content="website"/>
+        <meta property="og:site_name" content="Spotify"/>
+        <meta property="og:image" content="https://open.spotifycdn.com/cdn/images/download-page-image-mac.fec937cc.png"/>
+        <meta name="description" content="Spotify is a digital music service that gives you access to millions of songs."/>
+        <meta name="google" content="notranslate"/>
+        <meta name="al:android:app_name" content="Spotify"/>
+        <meta name="al:android:package" content="com.spotify.music"/>
+        <meta name="al:android:url" content="spotify://"/>
+        <meta name="al:ios:app_name" content="Spotify"/>
+        <meta name="al:ios:app_store_id" content="324684580"/>
+        <meta name="al:ios:url" content="spotify://"/>
+        <meta name="twitter:site" content="@spotify"/>
+        <meta name="twitter:title" content="Spotify - Web Player: Music for everyone"/>
+        <meta name="twitter:description" content="Spotify is a digital music service that gives you access to millions of songs."/>
+        <meta name="twitter:image" content="https://open.spotifycdn.com/cdn/images/download-page-image-mac.fec937cc.png"/>
+        <meta name="twitter:card" content="summary"/>
+        <link rel="canonical" href="https://open.spotify.com"/>
+        <link rel="alternate" href="https://open.spotify.com" hrefLang="x-default"/>
+        <link rel="alternate" href="https://open.spotify.com" hrefLang="en"/>
+        <link rel="alternate" href="https://open.spotify.com/intl-id" hrefLang="id"/>
+        <link rel="alternate" href="https://open.spotify.com/intl-de" hrefLang="de"/>
+        <link rel="alternate" href="https://open.spotify.com/intl-pt" hrefLang="pt"/>
+        <link rel="alternate" href="https://open.spotify.com/intl-ja" hrefLang="ja"/>
+        <link rel="alternate" href="https://open.spotify.com/intl-fr" hrefLang="fr"/>
+        <link rel="alternate" href="https://open.spotify.com/intl-ar" hrefLang="ar"/>
+        <link rel="alternate" href="https://open.spotify.com/intl-es" hrefLang="es"/>
+        <link rel="alternate" href="https://open.spotify.com/intl-tr" hrefLang="tr"/>
+        <link rel="alternate" href="https://open.spotify.com/intl-it" hrefLang="it"/>
+        <link rel="alternate" href="android-app://com.spotify.music/"/>
+        <link rel="manifest" href="https://open.spotifycdn.com/cdn/generated/manifest-web-player.1609946b.json"/>
+        <style data-styled="active"></style>
+        <link rel="stylesheet" href="https://open.spotifycdn.com/cdn/build/web-player/web-player.af46eb3a.css"/>
+        <link rel="preconnect" href="https://apresolve.spotify.com" crossorigin="anonymous"/>
+        <link rel="preconnect" href="https://clienttoken.spotify.com" crossorigin="anonymous"/>
+        <link rel="preconnect" href="https://api-partner.spotify.com" crossorigin="anonymous"/>
+        <link rel="preconnect" href="https://spclient.wg.spotify.com" crossorigin="anonymous"/>
+        <link rel="preconnect" href="https://api.spotify.com" crossorigin="anonymous"/>
+        <link rel="preconnect" href="https://daily-mix.scdn.co" crossorigin="anonymous"/>
+        <link rel="preconnect" href="https://exp.wg.spotify.com" crossorigin="anonymous"/>
+        <link rel="preconnect" href="https://i.scdn.co" crossorigin="anonymous"/>
+        <link rel="preconnect" href="https://lineup-images.scdn.co" crossorigin="anonymous"/>
+        <link rel="preconnect" href="https://mosaic.scdn.co" crossorigin="anonymous"/>
+        <link rel="preconnect" href="https://open.spotifycdn.com" crossorigin="anonymous"/>
+        <link rel="preconnect" href="https://open-exp.spotifycdn.com" crossorigin="anonymous"/>
+        <link rel="preconnect" href="https://pixel-static.spotify.com" crossorigin="anonymous"/>
+        <link rel="preconnect" href="https://pixel.spotify.com" crossorigin="anonymous"/>
+        <link rel="preconnect" href="https://pl.scdn.co" crossorigin="anonymous"/>
+        <link rel="preconnect" href="https://gew1-dealer.spotify.com" crossorigin="anonymous"/>
+        <link rel="preconnect" href="https://gew1-spclient.spotify.com" crossorigin="anonymous"/>
+        <link rel="preload" href="https://open.spotifycdn.com/cdn/generated-locales/web-player/en.9b414250.json" data-translations-url-for-locale="en" as="fetch" crossorigin="anonymous" type="application/json"/>
+        <style>
+            .grecaptcha-badge {
+                display: none !important;
+            }
+        </style>
+        <script src="https://www.google.com/recaptcha/enterprise.js?render=6LfCVLAUAAAAALFwwRnnCJ12DalriUGbj8FW_J39" async="" defer=""></script>
+        <link rel="search" type="application/opensearchdescription+xml" title="Spotify" href="https://open.spotifycdn.com/cdn/generated/opensearch.4cd8879e.xml"/>
+        <script defer="" src="https://www.googleoptimize.com/optimize.js?id=GTM-W53X654"></script>
+        <script defer="" src="https://open.spotifycdn.com/cdn/js/gtm.96d60fd6.js"></script>
+        <script defer="" src="https://open.spotifycdn.com/cdn/js/retargeting-pixels.02346b5d.js"></script>
+    </head>
+    <body class="encore-dark-theme encore-layout-themes">
+        <div class="body-drag-top"></div>
+        <script id="appServerConfig" type="text/plain">
+            eyJhcHBOYW1lIjoid2ViX3BsYXllcl9wcm90b3R5cGUiLCJtYXJrZXQiOiJCRyIsImxvY2FsZSI6eyJsb2NhbGUiOiJlbiIsInJ0bCI6ZmFsc2UsInRleHREaXJlY3Rpb24iOiJsdHIifSwidXNlckNvdW50cnkiOiJCRyIsImlzUHJlbWl1bSI6dHJ1ZSwiY29ycmVsYXRpb25JZCI6ImM3ZWIzNWM2NjdjZWYxN2NiZTk5NzQ3ZThiNjVjZjg3IiwiaXNBbm9ueW1vdXMiOmZhbHNlLCJndG1JZCI6IkdUTS1QWkhOM1ZEIiwib3B0aW1pemVJZCI6IkdUTS1XNTNYNjU0IiwicGlwUmVzb3VyY2VzIjp7InNjcmlwdHMiOlsiaHR0cHM6Ly9vcGVuLnNwb3RpZnljZG4uY29tL2Nkbi9idWlsZC93ZWItcGxheWVyL3ZlbmRvcn53ZWItcGxheWVyLmNlZDI1ODBhLmpzIiwiaHR0cHM6Ly9vcGVuLnNwb3RpZnljZG4uY29tL2Nkbi9idWlsZC93ZWItcGxheWVyL3BpcC1taW5pLXBsYXllci41NGE5YjkzZC5qcyJdLCJzdHlsZXMiOlsiaHR0cHM6Ly9vcGVuLnNwb3RpZnljZG4uY29tL2Nkbi9idWlsZC93ZWItcGxheWVyL3BpcC1taW5pLXBsYXllci4zZDhmMDNlZS5jc3MiXX0sInJldGFyZ2V0aW5nUGl4ZWxzIjpudWxsLCJyZWNhcHRjaGFXZWJQbGF5ZXJGcmF1ZFNpdGVLZXkiOiI2TGZDVkxBVUFBQUFBTEZ3d1JubkNKMTJEYWxyaVVHYmo4RldfSjM5Iiwic2VydmVyVGltZSI6MTc1NDY0MTEwMX0=
+        </script>
+        <script id="featureFlags" type="text/plain">
+            eyJlbmFibGVTaG93cyI6dHJ1ZX0=
+        </script>
+        <script id="seoExperiments" type="text/plain">
+            e30=
+        </script>
+        <script id="remoteConfig" type="text/plain">
+            eyIjdiI6IjEiLCJlbmFibGVTdWJ0aXRsZXNVc2luZ0hhcm1vbnkiOnRydWUsImVuYWJsZUZ1bGxzY3JlZW5Nb2RlIjp0cnVlLCJlbmFibGVOcHZBYm91dFBvZGNhc3QiOnRydWUsImVuYWJsZUFkYXB0aXZlVGl0bGVFbnRpdGllcyI6dHJ1ZSwiZW5hYmxlVXNlckNvbW1lbnRzRm9yRXBpc29kZXMiOnRydWUsImVuYWJsZUNvbmNlcnRzUmVwb3J0SXNzdWUiOnRydWUsImVuYWJsZVdhdGNoRmVlZCI6dHJ1ZSwiZW5hYmxlV2F0Y2hGZWVkRW50aXR5UGFnZXMiOnRydWUsImVuYWJsZUNvbmNlcnREaXN0YW5jZVJhZGl1cyI6dHJ1ZSwiZW5hYmxlSW1wcm92ZWRDaW5lbWFNb2RlQ2FudmFzIjp0cnVlLCJlbmFibGVQbGF5YmFja0JhckFuaW1hdGlvbiI6dHJ1ZSwiZW5hYmxlTmF2aWdhdGVUb0dhbGxlcnlGcm9tQ29uY2VwdFBpbGwiOnRydWUsImVuYWJsZVNtYXJ0U2h1ZmZsZSI6dHJ1ZSwiZW5hYmxlVW5pZmllZFNtYXJ0U2h1ZmZsZVNpZ25hbHMiOnRydWUsImVuYWJsZUNlbnRyYWxpc2VkU21hcnRTaHVmZmxlIjp0cnVlLCJlbmFibGVTdHJ1Y3R1cmVkRGVzY3JpcHRpb25IdG1sIjp0cnVlLCJlbmFibGVSZXBvcnRQb2RjYXN0U2hvd3MiOnRydWUsImVuYWJsZVJlcG9ydFBvZGNhc3RFcGlzb2RlcyI6dHJ1ZSwiZW5hYmxlUHJlbWl1bVVzZXJGb3JNaW5pUGxheWVyIjp0cnVlLCJlbmFibGVTdGF0aWNJbWFnZTJPcHRpbWl6ZXIiOnRydWUsImVuYWJsZVByZW1pdW1QYWdlIjp0cnVlLCJlbmFibGVNYW5kYWxvcmlhbkVhc3RlckVnZyI6IkhFTE1FVF9BTkRfU09VTkQiLCJlbmFibGVWaWV3TW9kZSI6dHJ1ZSwiZW5hYmxlVmVudWVQYWdlcyI6dHJ1ZSwiZW5hYmxlQ29uY2VydHNOZWFyWW91Ijp0cnVlLCJlbmFibGVGZWVkQmFzZWxpbmVUcmFuc2NyaXB0cyI6dHJ1ZSwiZW5hYmxlRmVlZEJhc2VsaW5lVmlkZW9QcmV2aWV3cyI6dHJ1ZSwiZW5hYmxlRmVlZEJhc2VsaW5lQXVkaW9QcmV2aWV3cyI6dHJ1ZSwiZW5hYmxlQXVkaW9ib29rQ2FyZFBsYXlCdXR0b24iOnRydWUsImVuYWJsZUNyZWF0ZUJ1dHRvbiI6InlvdXJfbGlicmFyeSIsImVuYWJsZVByZW1pdW1GbGFnRm9yTHlyaWNzIjp0cnVlLCJlbmFibGVZTFhQcmVyZWxlYXNlQWxidW1zIjp0cnVlLCJlbmFibGVFdmVudHNJbllvdXJMaWJyYXJ5Ijp0cnVlLCJlbmFibGVQdXNoQ2luZW1hTW9kZVN0YXRlVG9IaXN0b3J5Ijp0cnVlLCJlbmFibGVGdWxsc2NyZWVuTGlicmFyeSI6dHJ1ZSwiZW5hYmxlTnB2Q3JlZGl0c0ltcHJlc3Npb25zIjp0cnVlLCJlbmFibGVXZWJUb0Rlc2t0b3BGdW5uZWwiOnRydWUsImVuYWJsZVRPVFBWZXJzaW9uVmFsaWRhdGlvbiI6dHJ1ZSwiZW5hYmxlQ29uY2VydHNOb3RJbnRlcmVzdGVkIjp0cnVlLCIjY29uZmlndXJhdGlvbkFzc2lnbm1lbnRJZCI6IjhkMmYyYjhhLWVlNzktNTIzNy1mMmNjLWM3NmY1OGFjYjYxNDozMjM2MDkyIiwiI2dyb3VwSWRzIjp7ImVuYWJsZVN1YnRpdGxlc1VzaW5nSGFybW9ueSI6MzU1MTksImVuYWJsZUZ1bGxzY3JlZW5Nb2RlIjozMTI0NzksImVuYWJsZU5wdkFib3V0UG9kY2FzdCI6MTEzMDU5NSwiZW5hYmxlQWRhcHRpdmVUaXRsZUVudGl0aWVzIjoxMjAyOTY4LCJlbmFibGVVc2VyQ29tbWVudHNGb3JFcGlzb2RlcyI6MTIyMzk0OSwiZW5hYmxlQ29uY2VydHNSZXBvcnRJc3N1ZSI6MTIyNTMwNSwiZW5hYmxlV2F0Y2hGZWVkIjoxMjI3MjQ5LCJlbmFibGVXYXRjaEZlZWRFbnRpdHlQYWdlcyI6MTIyNzI0OSwiZW5hYmxlQ29uY2VydERpc3RhbmNlUmFkaXVzIjoxMjI3MTQyLCJlbmFibGVJbXByb3ZlZENpbmVtYU1vZGVDYW52YXMiOjEyMzM0ODIsImVuYWJsZUFtYmllbnRNb2RlVGltZXIiOjEyMzM0ODIsImVuYWJsZVBsYXliYWNrQmFyQW5pbWF0aW9uIjoxMTY3ODEyLCJlbmFibGVOYXZpZ2F0ZVRvR2FsbGVyeUZyb21Db25jZXB0UGlsbCI6MTI0NDA3MSwiZW5hYmxlU21hcnRTaHVmZmxlIjoxMjQ2OTk0LCJlbmFibGVVbmlmaWVkU21hcnRTaHVmZmxlU2lnbmFscyI6MTI0Njk5NCwiZW5hYmxlQ2VudHJhbGlzZWRTbWFydFNodWZmbGUiOjEyNDY5OTQsImVuYWJsZVN0cnVjdHVyZWREZXNjcmlwdGlvbkh0bWwiOjEyNTMxMDAsImVuYWJsZVJlcG9ydFBvZGNhc3RTaG93cyI6MTE2NTYxOCwiZW5hYmxlUmVwb3J0UG9kY2FzdEVwaXNvZGVzIjoxMTY1NjE4LCJlbmFibGVBdWRpb2Jvb2tBZEV4Y2x1c2l2aXR5IjoxMTM5MzMxLCJlbmFibGVQcmVtaXVtVXNlckZvck1pbmlQbGF5ZXIiOjExNTQyMDMsImVuYWJsZVN0YXRpY0ltYWdlMk9wdGltaXplciI6MTE1ODAzMSwiZW5hYmxlUHJlbWl1bVBhZ2UiOjExNzMzNzQsImVuYWJsZU1hbmRhbG9yaWFuRWFzdGVyRWdnIjoxMTg5NDY0LCJlbmFibGVWaWV3TW9kZSI6MTE4OTcwOSwiZW5hYmxlVmVudWVQYWdlcyI6MTIwMjI1OCwiZW5hYmxlUmVhY3RRdWVyeVBlcnNpc3RlbmNlIjoxMjE5MjA3LCJlbmFibGVDb25jZXJ0c05lYXJZb3UiOjEyMzEwODcsImVuYWJsZUZlZWRCYXNlbGluZVRyYW5zY3JpcHRzIjoxMjI1MDA3LCJlbmFibGVGZWVkQmFzZWxpbmVWaWRlb1ByZXZpZXdzIjoxMjI1MDA3LCJlbmFibGVGZWVkQmFzZWxpbmVBdWRpb1ByZXZpZXdzIjoxMjI1MDA3LCJlbmFibGVBdWRpb2Jvb2tDYXJkUGxheUJ1dHRvbiI6MTIyOTY2OSwiZW5hYmxlQ3JlYXRlQnV0dG9uIjoxMjMwNTEwLCJlbmFibGVQcmVtaXVtRmxhZ0Zvckx5cmljcyI6MTIzMDYzNywiZW5hYmxlWUxYUHJlcmVsZWFzZUFsYnVtcyI6MTIzNTEwMSwiZW5hYmxlRXZlbnRzSW5Zb3VyTGlicmFyeSI6MTIzNTEwNiwiZW5hYmxlUHVzaENpbmVtYU1vZGVTdGF0ZVRvSGlzdG9yeSI6MTIzNzkyNiwiZW5hYmxlRnVsbHNjcmVlbkxpYnJhcnkiOjEyMzc5MjYsImVuYWJsZU5wdkNyZWRpdHNJbXByZXNzaW9ucyI6MTIzODg3NywiZW5hYmxlV2ViVG9EZXNrdG9wRnVubmVsIjoxMjQyNDEyLCJlbmFibGVUT1RQVmVyc2lvblZhbGlkYXRpb24iOjEyNDc1ODAsImVuYWJsZUNvbmNlcnRzTm90SW50ZXJlc3RlZCI6MTI1MDIwNn0sIiNmZXRjaFRpbWVNaWxsaXMiOjE3NTQ2NDExMDE4OTksIiNjb250ZXh0SGFzaCI6IjNhY2JhMDkxY2Y3MDkwMWYifQ==
+        </script>
+        <script src="https://open.spotifycdn.com/cdn/build/web-player/web-player.b47d911b.js"></script>
+        <script src="https://open.spotifycdn.com/cdn/build/web-player/vendor~web-player.ced2580a.js"></script>
+        <script src="https://open.spotifycdn.com/cdn/build/web-player/encore~web-player.df6fba8f.js"></script>
+    </body>
 </html>
