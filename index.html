@@ -129,7 +129,14 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Login form handler
+    // Redirect when logged in
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        window.location.href = "dashboard.html"; // same window redirect
+      }
+    });
+
+    // Login handler
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.getElementById("loginEmail").value.trim();
@@ -140,13 +147,13 @@
         await signInWithEmailAndPassword(auth, email, password);
         message.textContent = "Logging in...";
         message.style.color = "#00ff99";
-      } catch (err) {
-        message.textContent = "Login failed: " + err.message;
+      } catch (error) {
+        message.textContent = "Login failed: " + error.message;
         message.style.color = "#ff3333";
       }
     });
 
-    // Signup form handler
+    // Signup handler
     document.getElementById("signupForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.getElementById("signupEmail").value.trim();
@@ -158,13 +165,13 @@
         message.textContent = "Signup successful. You can now log in.";
         message.style.color = "#00ff99";
         toggleForms();
-      } catch (err) {
-        message.textContent = "Signup failed: " + err.message;
+      } catch (error) {
+        message.textContent = "Signup failed: " + error.message;
         message.style.color = "#ff3333";
       }
     });
 
-    // Toggle forms between login and signup
+    // Toggle between login and signup forms
     window.toggleForms = function () {
       const loginForm = document.getElementById("loginForm");
       const signupForm = document.getElementById("signupForm");
@@ -179,13 +186,6 @@
 
       document.getElementById("message").textContent = "";
     };
-
-    // Redirect on login state change
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        window.location.href = "dashboard.html";
-      }
-    });
   </script>
 </body>
 </html>
